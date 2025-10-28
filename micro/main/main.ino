@@ -2,8 +2,6 @@
 
 void setup() {
     Serial.begin(BAUD_RATE);
-    delay(100);
-    Serial.println("Start!");
 }
 
 void loop() {
