@@ -2,7 +2,7 @@
 
 #include <Wire.h>
 
-#define BAUD_RATE 115200
+#define BAUD_RATE 9600
 
 #define ANALOG_0 26
 #define ANALOG_1 27
