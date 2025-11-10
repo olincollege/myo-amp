@@ -10,13 +10,7 @@ def main() -> None:
     time_to_run = 30
     arduino = serial.Serial(port, BAUD_RATE, timeout=15)
 
-    data = {
-        "sensor_1": [],
-        "sensor_2": [],
-        "sensor_3": [],
-        "sensor_4": [],
-        "sensor_5": [],
-    }
+    data = {"sensor_0": [], "sensor_1": [], "sensor_2": []}
 
     start_time = time.time()
     while time.time() - start_time < time_to_run:
