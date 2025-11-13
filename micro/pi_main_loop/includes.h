@@ -1,10 +1,12 @@
 #pragma once
 
-#define BAUD_RATE 115200
-
 #define MAX_DATA 255
 
+#define BAUD_RATE 115200
+
 #define ANALOG_RES 12
+
+// Analog pins
 
 #define ANALOG0 26
 
@@ -13,35 +15,39 @@
 #define ANALOG2 28
 
 
+#define STANDBY_DRIVER_0 22
 
-#define MOTOR_ENCODER_1 7
-
-#define PWM_MOTOR_1 20
-
-#define STANDBY_DRIVER_1 22
-
-#define MOTOR_1_CONNECTION_1 10
-
-#define MOTOR_1_CONNECTION_2 11
+#define STANDBY_DRIVER_1 21
 
 
+// Motor 0 Connections
 
-#define MOTOR_ENCODER_2 6
+#define MOTOR_ENCODER_0 7
 
-#define STANDBY_DRIVER_2 21
+#define PWM_MOTOR_0 20
 
-#define MOTOR_2_CONNECTION_1 13
+#define MOTOR_0_CONNECTION_1 10
 
-#define MOTOR_2_CONNECTION_2 12
-
-#define PWM_MOTOR_2 19
-
+#define MOTOR_0_CONNECTION_2 11
 
 
-#define MOTOR_ENCODER_3 5
+// Motor 1 Connections
 
-#define PWM_MOTOR_3 18
+#define MOTOR_ENCODER_1 6
 
-#define MOTOR_3_CONNECTION_1 8
+#define PWM_MOTOR_1 19
 
-#define MOTOR_3_CONNECTION_2 9
+#define MOTOR_1_CONNECTION_1 13
+
+#define MOTOR_1_CONNECTION_2 12
+
+
+// Motor 2 Connections
+
+#define MOTOR_ENCODER_2 5
+
+#define PWM_MOTOR_2 18
+
+#define MOTOR_2_CONNECTION_1 8
+
+#define MOTOR_2_CONNECTION_2 9

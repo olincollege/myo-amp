@@ -5,7 +5,7 @@ const int offsetA = 1;
 const int offsetB = 1;
 const int offsetC = 1;
 
-Motor linear_actuator(MOTOR_1_CONNECTION_1, MOTOR_1_CONNECTION_2, PWM_MOTOR_1, offsetA, STANDBY_DRIVER_1);
+Motor linear_actuator(MOTOR_0_CONNECTION_1, MOTOR_0_CONNECTION_2, PWM_MOTOR_0, offsetA, STANDBY_DRIVER_0);
 
 uint16_t sensor_0[MAX_DATA];
 uint16_t sensor_1[MAX_DATA];
