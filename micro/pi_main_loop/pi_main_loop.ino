@@ -2,10 +2,10 @@
 #include "SparkFun_TB6612.h"
 
 const int offsetA = 1;
+const int offsetB = 1;
+const int offsetC = 1;
 
-Motor linear_actuator(MOTOR_CONNECTION_1, MOTOR_CONNECTION_2, PWM_OUT, offsetA, STANDBY);
-
-
+Motor linear_actuator(MOTOR_1_CONNECTION_1, MOTOR_1_CONNECTION_2, PWM_MOTOR_1, offsetA, STANDBY_DRIVER_1);
 
 uint16_t sensor_0[MAX_DATA];
 uint16_t sensor_1[MAX_DATA];
