@@ -1,4 +1,11 @@
 #include "includes.h"
+#include "SparkFun_TB6612.h"
+
+const int offsetA = 1;
+
+Motor linear_actuator(MOTOR_CONNECTION_1, MOTOR_CONNECTION_2, PWM_OUT, offsetA, STANDBY);
+
+
 
 uint16_t sensor_0[MAX_DATA];
 uint16_t sensor_1[MAX_DATA];
@@ -25,8 +32,8 @@ void loop() {
             Serial.print(sensor_0[i]);
             Serial.println();
             sensor_0[i] = (uint16_t)0;
-            // delay(10);
         }
+        delay(75);
         counter_0 = 0;
     }
     sensor_1[counter_1] = (uint16_t)analogRead(ANALOG1);
@@ -37,8 +44,8 @@ void loop() {
             Serial.print(sensor_1[i]);
             Serial.println();
             sensor_1[i] = (uint16_t)0;
-            // delay(10);
         }
+        delay(75);
         counter_1 = 0;
     }
     sensor_2[counter_2] = (uint16_t)analogRead(ANALOG2);
@@ -49,12 +56,16 @@ void loop() {
             Serial.print(sensor_2[i]);
             Serial.println();
             sensor_2[i] = (uint16_t)0;
-            // delay(10);
         }
+        delay(75);
         counter_2 = 0;
     }
 }
 
-void setup1() {}
+void setup1() {
+}
 
-void loop1() {}
+void loop1() {
+    linear_actuator.drive(255, 100);
+    linear_actuator.drive(-255, 100);
+}
