@@ -5,7 +5,9 @@ const int offsetA = 1;
 const int offsetB = 1;
 const int offsetC = 1;
 
-Motor linear_actuator(MOTOR_0_CONNECTION_1, MOTOR_0_CONNECTION_2, PWM_MOTOR_0, offsetA, STANDBY_DRIVER_0);
+Motor linear_actuator_1(MOTOR_0_CONNECTION_1, MOTOR_0_CONNECTION_2, PWM_MOTOR_0, offsetA, STANDBY_DRIVER_0);
+Motor linear_actuator_2(MOTOR_1_CONNECTION_1, MOTOR_1_CONNECTION_2, PWM_MOTOR_1, offsetB, STANDBY_DRIVER_1);
+
 
 uint16_t sensor_0[MAX_DATA];
 uint16_t sensor_1[MAX_DATA];
@@ -28,9 +30,9 @@ void loop() {
     counter_0++;
     if (counter_0 == MAX_DATA) {
         for (int i = 0; i < MAX_DATA; i++) {
-            Serial.print("sensor_0 ");
-            Serial.print(sensor_0[i]);
-            Serial.println();
+            // Serial.print("sensor_0 ");
+            // Serial.print(sensor_0[i]);
+            // Serial.println();
             sensor_0[i] = (uint16_t)0;
         }
         delay(75);
@@ -40,9 +42,9 @@ void loop() {
     counter_1++;
     if (counter_1 == MAX_DATA) {
         for (int i = 0; i < MAX_DATA; i++) {
-            Serial.print("sensor_1 ");
-            Serial.print(sensor_1[i]);
-            Serial.println();
+            // Serial.print("sensor_1 ");
+            // Serial.print(sensor_1[i]);
+            // Serial.println();
             sensor_1[i] = (uint16_t)0;
         }
         delay(75);
@@ -52,9 +54,9 @@ void loop() {
     counter_2++;
     if (counter_2 == MAX_DATA) {
         for (int i = 0; i < MAX_DATA; i++) {
-            Serial.print("sensor_2 ");
-            Serial.print(sensor_2[i]);
-            Serial.println();
+            // Serial.print("sensor_2 ");
+            // Serial.print(sensor_2[i]);
+            // Serial.println();
             sensor_2[i] = (uint16_t)0;
         }
         delay(75);
@@ -66,6 +68,13 @@ void setup1() {
 }
 
 void loop1() {
-    linear_actuator.drive(255, 100);
-    linear_actuator.drive(-255, 100);
+    linear_actuator_1.drive(255, 1000);
+    Serial.println("Driving 1 out");
+    linear_actuator_1.drive(-255, 1000);
+    Serial.println("Driving 1 in");
+    delay(1500);
+    linear_actuator_2.drive(255, 1000);
+    Serial.println("Driving 2 out");
+    linear_actuator_2.drive(-255, 1000);
+    Serial.println("Driving 2 in");
 }
