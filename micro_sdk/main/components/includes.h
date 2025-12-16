@@ -3,6 +3,8 @@
 
 #define MAX_COUNT 255
 
+#define UART_ID uart0
+
 #define BAUD_RATE 115200
 
 // Analog pins
@@ -40,7 +42,5 @@
 #define MOTOR_2_CONNECTION_1 (uint)8
 
 #define MOTOR_2_CONNECTION_2 (uint)9
-
-// function
 
 void core1_entry(void);

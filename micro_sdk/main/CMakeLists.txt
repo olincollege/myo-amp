@@ -2,7 +2,7 @@
 
 cmake_minimum_required(VERSION 3.13)
 
-set(CMAKE_C_STANDARD 17)
+set(CMAKE_C_STANDARD 11)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
@@ -33,8 +33,9 @@ project(main C CXX ASM)
 # Initialise the Raspberry Pi Pico SDK
 pico_sdk_init()
 
-set(CMAKE_CXX_FLAGS "-O3 -Wall -Wextra -Wpedantic -Werror")
+set(PICO_DEOPTIMIZED_DEBUG 1)
 
+set(PICO_CXX_ENABLE_EXCEPTIONS 1)
 
 # Add executable. Default name is the project name, version 0.1
 
@@ -42,17 +43,25 @@ add_library(TB6612FNG components/TB6612FNG/TB6612FNG.cpp)
 add_library(context components/context/context.cpp)
 add_executable(main main.cpp)
 
+# Set C++ standard for all targets
+set_target_properties(TB6612FNG PROPERTIES CXX_STANDARD 17)
+set_target_properties(context PROPERTIES CXX_STANDARD 17)
+set_target_properties(main PROPERTIES CXX_STANDARD 17)
+
 pico_set_program_name(main "main")
 pico_set_program_version(main "0.3")
-
-# no_flash means the target is to run from RAM
-pico_set_binary_type(main no_flash)
 
 # Modify the below lines to enable/disable output over UART/USB
 pico_enable_stdio_uart(main 0)
 pico_enable_stdio_usb(main 1)
 
 # Add the standard library to the build
+
+target_include_directories(TB6612FNG PRIVATE
+        ${CMAKE_CURRENT_LIST_DIR}/components
+        ${CMAKE_CURRENT_LIST_DIR}/components/TB6612FNG
+)
+
 target_link_libraries(TB6612FNG
     hardware_pwm
     hardware_gpio
@@ -70,6 +79,11 @@ target_link_libraries(context
     hardware_adc
 )
 
+target_link_options(context PRIVATE
+    -specs=sync-dmb.specs
+)
+
+
 target_include_directories(context PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/components
         ${CMAKE_CURRENT_LIST_DIR}/components/context
@@ -81,6 +95,7 @@ target_link_libraries(main
         context
         pico_stdlib
         pico_multicore
+        hardware_gpio
 )
 
 # Add the standard include files to the build
@@ -88,6 +103,10 @@ target_include_directories(main PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/components
         ${CMAKE_CURRENT_LIST_DIR}/components/context
         ${CMAKE_CURRENT_LIST_DIR}/components/TB6612FNG
+)
+
+target_link_options(main PRIVATE
+    -specs=sync-dmb.specs
 )
 
 pico_add_extra_outputs(main)

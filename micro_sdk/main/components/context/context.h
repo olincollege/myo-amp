@@ -26,13 +26,20 @@ public:
 
 private:
   static std::atomic<PicoContext *> instance;
+
   static bool instance_initialized;
+
   PicoContext(std::array<const MotorGPIO, linear_actuator_count> &motor_gpios);
+
   uint sensor_state = 0;
+
   std::array<std::array<uint16_t, max_data>, sensor_count> sensors;
+
   std::array<Motor, linear_actuator_count> linear_actuators;
+
   constexpr static const std::array<const int, linear_actuator_count> offsets{
       1, 1, 1};
+
   static std::array<uint8_t, sensor_count> counters;
 };
 

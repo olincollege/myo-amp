@@ -23,7 +23,7 @@ int PicoContext::push_value() {
                   [context->counters[context->sensor_state]] = adc_read();
   context->counters[context->sensor_state]++;
   if (context->counters[context->sensor_state] == 255) {
-    return_val = context->sensor_state;
+    return_val = context->sensor_state + 1;
   }
   context->sensor_state++;
   if (context->sensor_state >= 3) {
@@ -71,10 +71,10 @@ Motor &PicoContext::get_linear_actuator(uint linear_actuator) {
 PicoContext::PicoContext(
     std::array<const MotorGPIO, linear_actuator_count> &motor_gpios) {
   sensor_init();
-  int i = 0;
-  for (const MotorGPIO &motor_gpio : motor_gpios) {
-    new (&linear_actuators[i]) Motor(motor_gpio, offsets[i]);
-    i++;
+
+  for (uint i = 0; i < linear_actuator_count; i++) {
+    linear_actuators[i].~Motor();
+    new (&linear_actuators[i]) Motor(motor_gpios[i], offsets[i]);
   }
 
   for (std::array<uint16_t, max_data> &sensor : sensors) {
@@ -86,7 +86,7 @@ PicoContext::PicoContext(
 
 void PicoContext::set_standby() {
   PicoContext *context = get_instance();
-  for (int i = 0; i < 2; i++) {
+  for (int i = 0; i < 3; i++) {
     context->linear_actuators[i].standby();
   }
 }
