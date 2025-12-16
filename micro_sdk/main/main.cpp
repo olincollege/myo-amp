@@ -11,8 +11,10 @@
 #include <stdio.h>
 
 void core1_entry(void) {
+  // Pick up pointer from pushing to the Multicore queue and recast it.
   PicoContext *instance =
       reinterpret_cast<PicoContext *>(multicore_fifo_pop_blocking());
+  // Clear the multicore queue.
   multicore_fifo_drain();
   sleep_ms(75);
   while (true) {
@@ -28,6 +30,7 @@ void core1_entry(void) {
       instance->get_linear_actuator(1).drive(-255, 1000);
       sleep_ms(1500);
       multicore_fifo_drain();
+      // Clear the IO stream after every interaction with core 1.
       stdio_flush();
     } else {
       PicoContext::set_standby();
@@ -38,7 +41,6 @@ void core1_entry(void) {
 }
 
 int main() {
-
   stdio_init_all();
   sleep_ms(2000);
 
@@ -46,6 +48,7 @@ int main() {
   gpio_set_dir(PICO_DEFAULT_LED_PIN, GPIO_OUT);
   gpio_put(PICO_DEFAULT_LED_PIN, true);
 
+  // Initialize MotorGPIO array for the PicoContext object.
   std::array<const MotorGPIO, linear_actuator_count> motor_gpio_connections{
       {{MOTOR_0_CONNECTION_1, MOTOR_0_CONNECTION_2, PWM_MOTOR_0,
         STANDBY_DRIVER_0},
@@ -55,15 +58,22 @@ int main() {
         STANDBY_DRIVER_1}}};
   PicoContext::initialize_instance(motor_gpio_connections);
 
+  // Launch core 1
   multicore_launch_core1(core1_entry);
   sleep_ms(1000);
+
+  // Get PicoContext instance and push it's pointer value to the multicore
+  // queue, to be recast back to the pointer.
   PicoContext *instance = PicoContext::get_instance();
   multicore_fifo_push_blocking((uint32_t)instance);
   sleep_ms(75);
 
+  // Count of how many refreshes happen to know when to trigger motor changes.
   uint refresh_counter = 0;
 
   while (true) {
+    // Returns 1, 2, or 3 if it is ready to refresh. -1 gets the actual sensor
+    // value.
     int is_ready_to_refresh = instance->push_value();
     if (is_ready_to_refresh > 0) {
       PicoContext::refresh(is_ready_to_refresh - 1);
@@ -76,9 +86,10 @@ int main() {
         // should follow - or 6 if there should be a delay with the function
         // push pointer to say hey - i have completed this
         refresh_counter = 0;
+        // Send signal to start driving motors
         multicore_fifo_push_blocking(1);
       }
-      sleep_ms(75);
     }
+    sleep_ms(75);
   }
 }

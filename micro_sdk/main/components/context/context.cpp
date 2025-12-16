@@ -21,9 +21,11 @@ int PicoContext::push_value() {
   int return_val = 0;
   context->sensors[context->sensor_state]
                   [context->counters[context->sensor_state]] = adc_read();
+
   context->counters[context->sensor_state]++;
+
   if (context->counters[context->sensor_state] == 255) {
-    return_val = context->sensor_state + 1;
+    return_val = context->sensor_state + 1; // Set to +1 to avoid reading 0.
   }
   context->sensor_state++;
   if (context->sensor_state >= 3) {
@@ -36,19 +38,22 @@ int PicoContext::push_value() {
 void PicoContext::refresh(uint sensor) {
   PicoContext *context = get_instance();
   for (uint i = 0; i < max_data; i++) {
+    // ! Print loop - set for removal after gathering training data is done.
     printf("sensor_%u: %u\n", sensor, context->sensors[sensor][i]);
+    // TODO: Remove for live viewing
     context->sensors[sensor][i] = (uint16_t)0;
   }
   context->counters[sensor] = 0;
 }
 
-typedef std::array<const MotorGPIO, linear_actuator_count> motor_gpio_list;
-
 void PicoContext::initialize_instance(motor_gpio_list &motor_gpios) {
   if (instance_initialized) {
     return;
   }
-  auto *context = new PicoContext(motor_gpios);
+  // Creates in heap
+  PicoContext *context = new PicoContext(motor_gpios);
+
+  // Stores in atomic container
   instance.store(context, std::memory_order_release);
   instance_initialized = true;
   return;
@@ -68,16 +73,17 @@ Motor &PicoContext::get_linear_actuator(uint linear_actuator) {
   return context->linear_actuators[linear_actuator];
 }
 
-PicoContext::PicoContext(
-    std::array<const MotorGPIO, linear_actuator_count> &motor_gpios) {
+PicoContext::PicoContext(motor_gpio_list &motor_gpios) {
   sensor_init();
 
   for (uint i = 0; i < linear_actuator_count; i++) {
+    // Destroy the default instances made from creating a Motor array.
     linear_actuators[i].~Motor();
+    // Use new with a specified place in memory to put it, instead of the heap.
     new (&linear_actuators[i]) Motor(motor_gpios[i], offsets[i]);
   }
 
-  for (std::array<uint16_t, max_data> &sensor : sensors) {
+  for (sensor_value_list &sensor : sensors) {
     sensor.fill(0);
   }
 

@@ -1,11 +1,7 @@
 #pragma once
 #include "pico/stdlib.h"
 
-#define MAX_COUNT 255
-
-#define UART_ID uart0
-
-#define BAUD_RATE 115200
+// Holds all pin values.
 
 // Analog pins
 

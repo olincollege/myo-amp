@@ -42,8 +42,11 @@ public:
   // Constructor. Mainly sets up pins.
   Motor(uint connection_1_pin, uint connection_2pin, uint PWM_pin,
         uint standby_pin, int offset);
+  // Secondary constructor with MotorGPIO struct.
   Motor(const MotorGPIO &motor_gpio, int offset);
+  // Default constructor for arrays and lists.
   Motor() : connection_1(0), connection_2(0), PWM(0), offset(0), stand_by(0) {}
+  // Default destructor.
   ~Motor() = default;
 
   Motor(const Motor &) = delete;

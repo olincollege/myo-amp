@@ -26,11 +26,13 @@ Developed with ROB-9457
 #include "pico/stdlib.h"
 #include <memory>
 
+// name change for readability
 #define HIGH true
 #define LOW false
 
 static bool standby_set = false;
 
+// Separate function to set standby GPIO, so that overwrites don't happen.
 static void gpio_set_standby() {
   if (!standby_set) {
     gpio_init(STANDBY_DRIVER_0);
