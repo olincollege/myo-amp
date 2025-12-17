@@ -1,0 +1,3 @@
+[submodule "micro_sdk/main/pico-tflmicro"]
+	path = micro_sdk/main/pico-tflmicro
+	url = https://github.com/raspberrypi/pico-tflmicro.git

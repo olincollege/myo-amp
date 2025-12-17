@@ -6,6 +6,10 @@
 #include "pico/multicore.h"
 #include "pico/stdlib.h"
 
+#include "tensorflow/lite/micro/micro_interpreter.h"
+#include "tensorflow/lite/micro/micro_mutable_op_resolver.h"
+#include "tensorflow/lite/schema/schema_generated.h"
+
 #include <array>
 #include <stdint.h>
 #include <stdio.h>
@@ -21,13 +25,24 @@ void core1_entry(void) {
     if (multicore_fifo_rvalid()) {
       // set speed and duration to values inside instance (the ml read code
       // values) set linear actuators directly
-      instance->get_linear_actuator(0).drive(255, 1000);
-      sleep_ms(75);
-      instance->get_linear_actuator(0).drive(-255, 1000);
       sleep_ms(1500);
-      instance->get_linear_actuator(1).drive(255, 1000);
+      printf("Linear Actuator 0 Drive out\n");
+      instance->get_linear_actuator(0).drive(255);
       sleep_ms(75);
-      instance->get_linear_actuator(1).drive(-255, 1000);
+      printf("Linear Actuator 0 Drive in\n");
+      instance->get_linear_actuator(0).drive(-255);
+      sleep_ms(1500);
+      printf("Linear Actuator 1 Drive out\n");
+      instance->get_linear_actuator(1).drive(255);
+      sleep_ms(75);
+      printf("Linear Actuator 1 Drive in\n");
+      instance->get_linear_actuator(1).drive(-255);
+      sleep_ms(1500);
+      printf("Linear Actuator 2 Drive out\n");
+      instance->get_linear_actuator(2).drive(255);
+      sleep_ms(75);
+      printf("Linear Actuator 2 Drive in\n");
+      instance->get_linear_actuator(2).drive(-255);
       sleep_ms(1500);
       multicore_fifo_drain();
       // Clear the IO stream after every interaction with core 1.
@@ -47,6 +62,7 @@ int main() {
   gpio_init(PICO_DEFAULT_LED_PIN);
   gpio_set_dir(PICO_DEFAULT_LED_PIN, GPIO_OUT);
   gpio_put(PICO_DEFAULT_LED_PIN, true);
+  printf("startup!\n");
 
   // Initialize MotorGPIO array for the PicoContext object.
   std::array<const MotorGPIO, linear_actuator_count> motor_gpio_connections{
@@ -89,6 +105,5 @@ int main() {
         multicore_fifo_push_blocking(1);
       }
     }
-    sleep_ms(75);
   }
 }

@@ -39,6 +39,8 @@ set(PICO_CXX_ENABLE_EXCEPTIONS 1)
 
 # Add executable. Default name is the project name, version 0.1
 
+add_subdirectory(pico-tflmicro)
+
 add_library(TB6612FNG components/TB6612FNG/TB6612FNG.cpp)
 add_library(DRV8871 components/DRV8871/DRV8871.cpp)
 add_library(context components/context/context.cpp)
@@ -92,6 +94,7 @@ target_include_directories(context PRIVATE
 target_link_libraries(context
     TB6612FNG
     DRV8871
+    pico-tflmicro
     pico_stdlib
     hardware_adc
 )
@@ -105,6 +108,7 @@ target_link_libraries(main
     TB6612FNG
     context
     pico_stdlib
+    pico-tflmicro
     pico_multicore
     hardware_gpio
 )
@@ -112,6 +116,7 @@ target_link_libraries(main
 target_include_directories(main PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/components
     ${CMAKE_CURRENT_LIST_DIR}/components/context
+    # ${CMAKE_CURRENT_LIST_DIR}/pico-tflmicro/src/tensorflow
     ${CMAKE_CURRENT_LIST_DIR}/components/TB6612FNG
 )
 

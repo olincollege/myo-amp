@@ -4,6 +4,10 @@
 #include "TB6612FNG.h"
 #include "includes.h"
 
+#include "tensorflow/lite/micro/micro_interpreter.h"
+#include "tensorflow/lite/micro/micro_mutable_op_resolver.h"
+#include "tensorflow/lite/schema/schema_generated.h"
+
 #include "pico/stdlib.h"
 #include <array>
 #include <atomic>
@@ -78,10 +82,12 @@ PicoContext::PicoContext(motor_gpio_list &motor_gpios) {
   sensor_init();
 
   linear_actuators[0].~Motor();
-  new (&linear_actuators[0]) Motor(motor_gpios[0], offsets[0]);
   linear_actuators[1].~Motor();
-  new (&linear_actuators[1]) Motor(motor_gpios[1], offsets[1]);
   linear_actuators[2].~Motor();
+  new (&linear_actuators[0]) Motor(motor_gpios[0], offsets[0]);
+
+  new (&linear_actuators[1]) Motor(motor_gpios[1], offsets[1]);
+
   new (&linear_actuators[2]) SpecialMotor(motor_gpios[2], offsets[2]);
 
   for (sensor_value_list &sensor : sensors) {

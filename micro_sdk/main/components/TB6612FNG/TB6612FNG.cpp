@@ -25,6 +25,7 @@ Developed with ROB-9457
 
 #include "pico/stdlib.h"
 #include <memory>
+#include <stdio.h>
 
 // name change for readability
 #define HIGH true
@@ -92,6 +93,7 @@ void Motor::analog_write(uint pin, int speed) {
 }
 
 void Motor::drive(int speed) {
+  printf("Driving motor..\n");
   gpio_put(stand_by, HIGH);
   speed = speed * offset;
   if (speed >= 0)
@@ -105,12 +107,14 @@ void Motor::drive(int speed, uint32_t duration) {
 }
 
 void Motor::fwd(int speed) {
+  printf("Pushing forward..\n");
   gpio_put(connection_1, HIGH);
   gpio_put(connection_2, LOW);
   analog_write(0, speed);
 }
 
 void Motor::rev(int speed) {
+  printf("Pushing backward..\n");
   gpio_put(connection_1, LOW);
   gpio_put(connection_2, HIGH);
   analog_write(0, speed);

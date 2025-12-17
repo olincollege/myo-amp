@@ -9,6 +9,10 @@
 #include <memory>
 #include <stdint.h>
 
+#include "tensorflow/lite/micro/micro_interpreter.h"
+#include "tensorflow/lite/micro/micro_mutable_op_resolver.h"
+#include "tensorflow/lite/schema/schema_generated.h"
+
 // amount of linear actuators
 #define linear_actuator_count (uint)3
 
