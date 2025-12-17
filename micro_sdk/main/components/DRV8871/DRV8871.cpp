@@ -17,10 +17,13 @@ SpecialMotor::SpecialMotor(uint connection_1_pin, uint connection_2_pin,
                            uint PWM_pin, uint standby_pin, int offset) {
   connection_1 = connection_1_pin;
   connection_2 = connection_2_pin;
+  // PWM and standby pins no longer necessary
   PWM = 0;
   stand_by = 0;
   this->offset = offset;
 
+  // Predefine both as PWM pins, and set them to 0 when on standby and on 255
+  // when needing to brake.
   gpio_init(connection_1_pin);
   gpio_set_dir(connection_1_pin, GPIO_OUT);
   gpio_set_function(connection_1_pin, GPIO_FUNC_PWM);
@@ -72,6 +75,7 @@ void SpecialMotor::drive(int speed) {
   else
     rev(-speed);
 }
+
 void SpecialMotor::drive(int speed, uint32_t duration) {
   drive(speed);
   sleep_ms(duration);
