@@ -37,8 +37,6 @@ static void gpio_set_standby() {
   if (!standby_set) {
     gpio_init(STANDBY_DRIVER_0);
     gpio_set_dir(STANDBY_DRIVER_0, GPIO_OUT);
-    gpio_init(STANDBY_DRIVER_1);
-    gpio_set_dir(STANDBY_DRIVER_1, GPIO_OUT);
     standby_set = true;
   }
 }
@@ -84,7 +82,7 @@ Motor::Motor(const MotorGPIO &motor_gpio, int offset) {
   gpio_set_standby();
 }
 
-void Motor::analog_write(int speed) {
+void Motor::analog_write(uint pin, int speed) {
   uint slice = pwm_gpio_to_slice_num(PWM);
   uint channel = pwm_gpio_to_channel(PWM);
 
@@ -109,19 +107,19 @@ void Motor::drive(int speed, uint32_t duration) {
 void Motor::fwd(int speed) {
   gpio_put(connection_1, HIGH);
   gpio_put(connection_2, LOW);
-  analog_write(speed);
+  analog_write(0, speed);
 }
 
 void Motor::rev(int speed) {
   gpio_put(connection_1, LOW);
   gpio_put(connection_2, HIGH);
-  analog_write(speed);
+  analog_write(0, speed);
 }
 
 void Motor::brake() {
   gpio_put(connection_1, HIGH);
   gpio_put(connection_2, HIGH);
-  analog_write(0);
+  analog_write(0, 0);
 }
 
 void Motor::standby() { gpio_put(stand_by, LOW); }

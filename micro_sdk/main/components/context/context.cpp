@@ -1,5 +1,6 @@
 #include "context.h"
 
+#include "DRV8871.h"
 #include "TB6612FNG.h"
 #include "includes.h"
 
@@ -76,12 +77,12 @@ Motor &PicoContext::get_linear_actuator(uint linear_actuator) {
 PicoContext::PicoContext(motor_gpio_list &motor_gpios) {
   sensor_init();
 
-  for (uint i = 0; i < linear_actuator_count; i++) {
-    // Destroy the default instances made from creating a Motor array.
-    linear_actuators[i].~Motor();
-    // Use new with a specified place in memory to put it, instead of the heap.
-    new (&linear_actuators[i]) Motor(motor_gpios[i], offsets[i]);
-  }
+  linear_actuators[0].~Motor();
+  new (&linear_actuators[0]) Motor(motor_gpios[0], offsets[0]);
+  linear_actuators[1].~Motor();
+  new (&linear_actuators[1]) Motor(motor_gpios[1], offsets[1]);
+  linear_actuators[2].~Motor();
+  new (&linear_actuators[2]) SpecialMotor(motor_gpios[2], offsets[2]);
 
   for (sensor_value_list &sensor : sensors) {
     sensor.fill(0);

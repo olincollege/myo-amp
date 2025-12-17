@@ -22,8 +22,6 @@ Developed with ROB-9457
 #include <memory>
 #include <stdint.h>
 
-using std::unique_ptr;
-
 // used in some functions so you don't have to send a speed
 #define DEFAULTSPEED 255
 
@@ -47,42 +45,42 @@ public:
   // Default constructor for arrays and lists.
   Motor() : connection_1(0), connection_2(0), PWM(0), offset(0), stand_by(0) {}
   // Default destructor.
-  ~Motor() = default;
+  virtual ~Motor() = default;
 
   Motor(const Motor &) = delete;
-  Motor &operator=(const Motor &) = delete;
+  virtual Motor &operator=(const Motor &) = delete;
 
   Motor(Motor &&other) = default;
-  Motor &operator=(Motor &&other) = default;
+  virtual Motor &operator=(Motor &&other) = default;
 
   // Drive in direction given by sign, at speed given by magnitude of the
   // parameter.
-  void drive(int speed);
+  virtual void drive(int speed);
 
   // drive(), but with a delay(duration)
-  void drive(int speed, uint32_t duration);
+  virtual void drive(int speed, uint32_t duration);
 
   // currently not implemented
   // void stop();           // Stop motors, but allow them to coast to a halt.
   // void coast();          // Stop motors, but allow them to coast to a halt.
 
   // Stops motor by setting both input pins high
-  void brake();
+  virtual void brake();
 
   // set the chip to standby mode.  The drive function takes it out of standby
   //(forward, back, left, and right all call drive)
-  void standby();
+  virtual void standby();
 
-private:
+protected:
   // variables for the 2 inputs, PWM input, offset value, and the Standby pin
   uint connection_1, connection_2, PWM, offset, stand_by;
 
   // private functions that spin the motor CC and CCW
-  void fwd(int speed);
-  void rev(int speed);
+  virtual void fwd(int speed);
+  virtual void rev(int speed);
 
   // to write as PWM to motors.
-  void analog_write(int speed);
+  virtual void analog_write(uint pin, int speed);
 };
 
 // This function takes 2 motors and and brakes them

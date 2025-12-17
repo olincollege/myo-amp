@@ -54,8 +54,7 @@ int main() {
         STANDBY_DRIVER_0},
        {MOTOR_1_CONNECTION_1, MOTOR_1_CONNECTION_2, PWM_MOTOR_1,
         STANDBY_DRIVER_0},
-       {MOTOR_2_CONNECTION_1, MOTOR_2_CONNECTION_2, PWM_MOTOR_2,
-        STANDBY_DRIVER_1}}};
+       {MOTOR_2_CONNECTION_1, MOTOR_2_CONNECTION_2, 0, 0}}};
   PicoContext::initialize_instance(motor_gpio_connections);
 
   // Launch core 1

@@ -40,11 +40,13 @@ set(PICO_CXX_ENABLE_EXCEPTIONS 1)
 # Add executable. Default name is the project name, version 0.1
 
 add_library(TB6612FNG components/TB6612FNG/TB6612FNG.cpp)
+add_library(DRV8871 components/DRV8871/DRV8871.cpp)
 add_library(context components/context/context.cpp)
 add_executable(main main.cpp)
 
 # Set C++ standard for all targets
 set_target_properties(TB6612FNG PROPERTIES CXX_STANDARD 17)
+set_target_properties(DRV8871 PROPERTIES CXX_STANDARD 17)
 set_target_properties(context PROPERTIES CXX_STANDARD 17)
 set_target_properties(main PROPERTIES CXX_STANDARD 17)
 
@@ -58,8 +60,8 @@ pico_enable_stdio_usb(main 1)
 # Add the standard library to the build
 
 target_include_directories(TB6612FNG PRIVATE
-        ${CMAKE_CURRENT_LIST_DIR}/components
-        ${CMAKE_CURRENT_LIST_DIR}/components/TB6612FNG
+    ${CMAKE_CURRENT_LIST_DIR}/components
+    ${CMAKE_CURRENT_LIST_DIR}/components/TB6612FNG
 )
 
 target_link_libraries(TB6612FNG
@@ -68,13 +70,28 @@ target_link_libraries(TB6612FNG
     pico_stdlib
 )
 
+target_include_directories(DRV8871 PRIVATE
+    ${CMAKE_CURRENT_LIST_DIR}/components
+    ${CMAKE_CURRENT_LIST_DIR}/components/TB6612FNG
+    ${CMAKE_CURRENT_LIST_DIR}/components/DRV8871
+)
+
+target_linK_libraries(DRV8871
+    hardware_pwm
+    hardware_gpio
+    pico_stdlib
+    TB6612FNG
+)
+
 target_include_directories(context PRIVATE
-        ${CMAKE_CURRENT_LIST_DIR}/components
-        ${CMAKE_CURRENT_LIST_DIR}/components/TB6612FNG
+    ${CMAKE_CURRENT_LIST_DIR}/components
+    ${CMAKE_CURRENT_LIST_DIR}/components/TB6612FNG
+    ${CMAKE_CURRENT_LIST_DIR}/components/DRV8871
 )
 
 target_link_libraries(context
     TB6612FNG
+    DRV8871
     pico_stdlib
     hardware_adc
 )
@@ -84,25 +101,18 @@ target_link_options(context PRIVATE
 )
 
 
-target_include_directories(context PRIVATE
-        ${CMAKE_CURRENT_LIST_DIR}/components
-        ${CMAKE_CURRENT_LIST_DIR}/components/context
-        ${CMAKE_CURRENT_LIST_DIR}/components/TB6612FNG
-)
-
 target_link_libraries(main
-        TB6612FNG
-        context
-        pico_stdlib
-        pico_multicore
-        hardware_gpio
+    TB6612FNG
+    context
+    pico_stdlib
+    pico_multicore
+    hardware_gpio
 )
 
-# Add the standard include files to the build
 target_include_directories(main PRIVATE
-        ${CMAKE_CURRENT_LIST_DIR}/components
-        ${CMAKE_CURRENT_LIST_DIR}/components/context
-        ${CMAKE_CURRENT_LIST_DIR}/components/TB6612FNG
+    ${CMAKE_CURRENT_LIST_DIR}/components
+    ${CMAKE_CURRENT_LIST_DIR}/components/context
+    ${CMAKE_CURRENT_LIST_DIR}/components/TB6612FNG
 )
 
 target_link_options(main PRIVATE

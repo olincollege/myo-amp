@@ -13,8 +13,6 @@
 
 #define STANDBY_DRIVER_0 (uint)22
 
-#define STANDBY_DRIVER_1 (uint)21
-
 // Motor 0 Connections
 
 #define PWM_MOTOR_0 (uint)20
@@ -32,8 +30,6 @@
 #define MOTOR_1_CONNECTION_2 (uint)12
 
 // Motor 2 Connections
-
-#define PWM_MOTOR_2 (uint)18
 
 #define MOTOR_2_CONNECTION_1 (uint)8
 
