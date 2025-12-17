@@ -25,25 +25,34 @@ void core1_entry(void) {
     if (multicore_fifo_rvalid()) {
       // set speed and duration to values inside instance (the ml read code
       // values) set linear actuators directly
+      int model_ret = multicore_fifo_pop_blocking();
+      PicoContext::convert_to_in_range(model_ret);
+
       sleep_ms(1500);
       printf("Linear Actuator 0 Drive out\n");
       instance->get_linear_actuator(0).drive(255);
-      sleep_ms(75);
+      sleep_ms(1500);
       printf("Linear Actuator 0 Drive in\n");
       instance->get_linear_actuator(0).drive(-255);
       sleep_ms(1500);
       printf("Linear Actuator 1 Drive out\n");
       instance->get_linear_actuator(1).drive(255);
-      sleep_ms(75);
+      sleep_ms(1500);
       printf("Linear Actuator 1 Drive in\n");
       instance->get_linear_actuator(1).drive(-255);
       sleep_ms(1500);
       printf("Linear Actuator 2 Drive out\n");
       instance->get_linear_actuator(2).drive(255);
-      sleep_ms(75);
+      sleep_ms(1500);
       printf("Linear Actuator 2 Drive in\n");
       instance->get_linear_actuator(2).drive(-255);
       sleep_ms(1500);
+
+      // instance->get_linear_actuator(0).drive(instance->get_model_value(0));
+      // instance->get_linear_actuator(1).drive(instance->get_model_value(1));
+      // instance->get_linear_actuator(2).drive(instance->get_model_value(2));
+      // sleep_ms(1500);
+
       multicore_fifo_drain();
       // Clear the IO stream after every interaction with core 1.
       stdio_flush();
@@ -94,14 +103,14 @@ int main() {
       PicoContext::refresh(is_ready_to_refresh - 1);
       if (refresh_counter < 3) {
         refresh_counter++;
-        printf("Refresh counter: %d\n", refresh_counter);
+        // printf("Refresh counter: %d\n", refresh_counter);
       } else {
         // insert ml read code
-        // should function like - edit an array of 3 values that each motor
         // should follow - or 6 if there should be a delay with the function
         // push pointer to say hey - i have completed this
         refresh_counter = 0;
         // Send signal to start driving motors
+
         multicore_fifo_push_blocking(1);
       }
     }

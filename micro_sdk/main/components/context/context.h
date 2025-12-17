@@ -58,6 +58,12 @@ public:
   // be on standby.
   static void set_standby();
 
+  static void set_model_value(int index, int value);
+
+  static int get_model_value(int index);
+
+  static void convert_to_in_range(int model_ret);
+
 private:
   // The singular atomic PicoContext instance.
   static std::atomic<PicoContext *> instance;
@@ -78,6 +84,10 @@ private:
 
   // The list of all of the Motor classes.
   std::array<Motor, linear_actuator_count> linear_actuators;
+
+  std::array<int, sensor_count> model_values;
+
+  std::array<uint8_t, sensor_count> motor_output;
 
   // All of the offsets, in order. Constexpr because you have to change this
   // before compile time anyways.

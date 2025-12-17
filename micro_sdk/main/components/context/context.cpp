@@ -42,13 +42,17 @@ int PicoContext::push_value() {
 
 void PicoContext::refresh(uint sensor) {
   PicoContext *context = get_instance();
-  for (uint i = 0; i < max_data; i++) {
-    // ! Print loop - set for removal after gathering training data is done.
-    printf("sensor_%u: %u\n", sensor, context->sensors[sensor][i]);
-    // TODO: Remove for live viewing
-    context->sensors[sensor][i] = (uint16_t)0;
+  if (sensor == 0) {
+    for (uint i = 0; i < max_data; i++) {
+      // ! Print loop - set for removal after gathering training data is
+      // done.
+      printf("sensor_%u %u\n", sensor, context->sensors[sensor][i]);
+      // TODO: Remove for live viewing
+      context->sensors[sensor][i] = (uint16_t)0;
+    }
+    sleep_ms(75);
+    context->counters[sensor] = 0;
   }
-  context->counters[sensor] = 0;
 }
 
 void PicoContext::initialize_instance(motor_gpio_list &motor_gpios) {
@@ -78,6 +82,52 @@ Motor &PicoContext::get_linear_actuator(uint linear_actuator) {
   return context->linear_actuators[linear_actuator];
 }
 
+void PicoContext::set_model_value(int index, int value) {
+  PicoContext *context = get_instance();
+  context->model_values[index] = value;
+}
+
+int PicoContext::get_model_value(int index) {
+  PicoContext *context = get_instance();
+  return context->model_values[index];
+}
+
+void PicoContext::convert_to_in_range(int model_ret) {
+  PicoContext *context = get_instance();
+  switch (model_ret) {
+  case 0:
+    context->motor_output[0] = 1;
+    context->motor_output[1] = 1;
+    context->motor_output[2] = 255;
+    break;
+  case 1:
+    context->motor_output[0] = 1;
+    context->motor_output[1] = 1;
+    context->motor_output[2] = 1;
+    break;
+  case 2:
+    context->motor_output[0] = 255;
+    context->motor_output[1] = 255;
+    context->motor_output[2] = 255;
+    break;
+  case 3:
+    context->motor_output[0] = 137;
+    context->motor_output[1] = 137;
+    context->motor_output[2] = 137;
+    break;
+  case 4:
+    context->motor_output[0] = 127;
+    context->motor_output[1] = 127;
+    context->motor_output[2] = 127;
+    break;
+  default:
+    context->motor_output[0] = 255;
+    context->motor_output[1] = 255;
+    context->motor_output[2] = 255;
+    break;
+  }
+}
+
 PicoContext::PicoContext(motor_gpio_list &motor_gpios) {
   sensor_init();
 
@@ -90,8 +140,10 @@ PicoContext::PicoContext(motor_gpio_list &motor_gpios) {
 
   new (&linear_actuators[2]) SpecialMotor(motor_gpios[2], offsets[2]);
 
-  for (sensor_value_list &sensor : sensors) {
-    sensor.fill(0);
+  for (int i = 0; i < sensor_count; i++) {
+    model_values[i] = 0;
+    sensors[i].fill(0);
+    motor_output[i] = (uint8_t)0;
   }
 
   sensor_state = 0;
